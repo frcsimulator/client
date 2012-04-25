@@ -41,6 +41,7 @@ public class SimulatorControlFrame extends JFrame {
 	protected String midletName;
 	protected static final Logger logger = Logger.getLogger(SimulatorControlFrame.class.getName());
 	protected static JButton startButton = new JButton("Start simulator");
+        protected JScrollBar scrollBar = null;
 	protected JMenuBar menuBar;
 	protected JMenu fileMenu, fileExamplesMenuItem, helpMenu;
 	protected JMenuItem fileQuitMenuItem, helpAboutMenuItem;
@@ -121,6 +122,7 @@ public class SimulatorControlFrame extends JFrame {
 		console.setMargin(new Insets(3,3,3,3));
 		JScrollPane outScroll = new JScrollPane(console);
 		outScroll.setMinimumSize(new Dimension(getMinimumSize().width,(int)(getHeight()*.4)));
+                scrollBar=outScroll.getVerticalScrollBar();
 		componentTree = new JTree(new JTree.DynamicUtilTreeNode("Components",SimulatedBot.getSimComponents()));
 		componentTree.setRootVisible(false);
 		componentTree.addTreeSelectionListener(new TreeSelectionListener() {
@@ -213,6 +215,7 @@ public class SimulatorControlFrame extends JFrame {
 		@Override
 		public void write(int i) throws IOException {
 			area.append(new String(Character.toChars(i)));
+                        scrollBar.setValue(scrollBar.getMaximum()+scrollBar.getVisibleAmount());
 		}
 	}
 	private class ExampleSelectAction extends AbstractAction {
