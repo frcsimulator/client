@@ -9,7 +9,11 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 import java.util.logging.StreamHandler;
 import javax.swing.SwingUtilities;
+import net.sourceforge.frcsimulator.test.*;
 import net.sourceforge.frcsimulator.gui.SimulatorControlFrame;
+import net.sourceforge.frcsimulator.internals.CRIO;
+import net.sourceforge.frcsimulator.internals.CRIOModule;
+import net.sourceforge.frcsimulator.internals.ModuleException;
 import net.sourceforge.frcsimulator.mistware.Simulator;
 
 /**
@@ -22,7 +26,7 @@ public class FrcBotSimTest {
 	 * @param args the command line arguments
 	 */
 	public static void main(String[] args) {
-		String testCase = "FRCBotRobotBase";
+		String testCase = "net.sourceforge.frcsimulator.test.FRCBotRobotBase";
 		boolean gui = false;
 		// Process arguments
 		if (args.length > 0) {
@@ -43,7 +47,9 @@ public class FrcBotSimTest {
 			System.err.println("Too many arguments!");
 			System.exit(E_BADARGS); // Bad arguments
 		}
-
+        try {
+            CRIO.getInstance().addModule(new CRIOModule(0x01), 1);
+        } catch (ModuleException ex) {ex.printStackTrace();}
 		if (gui) {
 			simulatorGui(testCase);
 		} else {

@@ -17,7 +17,7 @@ public class BooleanPropertyEditor extends PropertyEditor {
 	protected JCheckBox checkbox;
 	protected FrcBotSimProperty<Boolean> property;
 	@Override
-	public void initialize(String key, final FrcBotSimProperty iProperty) {
+	public void initialize(String key, FrcBotSimProperty iProperty) {
 		property = iProperty;
 		checkbox = new JCheckBox(key);
 		checkbox.addChangeListener(new ChangeListener() {
