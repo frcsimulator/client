@@ -12,10 +12,10 @@ import net.sourceforge.frcsimulator.internals.FrcBotSimProperty;
  *
  * @author wolf
  */
-public abstract class PropertyEditor extends JPanel {
+public abstract class PropertyEditor<T> extends JPanel {
 	public static final PropertyEditor nullPropertyEditor = new NullPropertyEditor();
 	public static final HashMap<Class<?>,Class<? extends PropertyEditor>> editors = new HashMap();
-	public abstract void initialize(String key, FrcBotSimProperty property);
+	public abstract void initialize(String key, FrcBotSimProperty<T> property);
 	public static final void register(Class<?> propertyClass, Class<? extends PropertyEditor> editor) {
 		editors.put(propertyClass, editor);
 	}

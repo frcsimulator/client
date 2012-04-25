@@ -13,11 +13,11 @@ import net.sourceforge.frcsimulator.internals.FrcBotSimProperty;
  *
  * @author wolf
  */
-public class BooleanPropertyEditor extends PropertyEditor {
+public class BooleanPropertyEditor extends PropertyEditor<Boolean> {
 	protected JCheckBox checkbox;
 	protected FrcBotSimProperty<Boolean> property;
 	@Override
-	public void initialize(String key, FrcBotSimProperty iProperty) {
+	public void initialize(String key, FrcBotSimProperty<Boolean> iProperty) {
 		property = iProperty;
 		checkbox = new JCheckBox(key);
 		checkbox.addChangeListener(new ChangeListener() {

@@ -4,17 +4,17 @@
  */
 package net.sourceforge.frcsimulator.gui;
 
-import net.sourceforge.frcsimulator.gui.propertyeditor.PropertyEditor;
 import frcbotsimtest.FrcBotSimTest;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
-import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
@@ -24,11 +24,11 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreePath;
 import net.sourceforge.frcsimulator.gui.propertyeditor.BooleanPropertyEditor;
+import net.sourceforge.frcsimulator.gui.propertyeditor.BytePropertyEditor;
+import net.sourceforge.frcsimulator.gui.propertyeditor.PropertyEditor;
 import net.sourceforge.frcsimulator.internals.CRIO;
 import net.sourceforge.frcsimulator.internals.FrcBotSimComponent;
-import net.sourceforge.frcsimulator.internals.FrcBotSimProperty;
 import net.sourceforge.frcsimulator.internals.SimulatedBot;
 import net.sourceforge.frcsimulator.mistware.Simulator;
 
@@ -60,6 +60,7 @@ public class SimulatorControlFrame extends JFrame {
 		Logger.getLogger(SimulatorControlFrame.class.getName()).addHandler(new GuiHandler());
 		//// Property Editors ////
 		PropertyEditor.register(Boolean.class, BooleanPropertyEditor.class);
+                PropertyEditor.register(Byte.class, BytePropertyEditor.class);
 		//// Initialize the window ////
 		setLayout(new BorderLayout());
 		setSize(new Dimension(500,500));
