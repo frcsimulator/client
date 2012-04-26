@@ -14,6 +14,6 @@ import net.sourceforge.frcsimulator.internals.FrcBotSimProperty;
 public class NullPropertyEditor extends PropertyEditor {
 	@Override
 	public void initialize(String key, FrcBotSimProperty property) {
-		add(new JLabel("No property selected."));
+		add(new JLabel("No valid property selected."));
 	}
 }

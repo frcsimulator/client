@@ -15,6 +15,8 @@ import java.awt.event.InputEvent;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.lang.reflect.Array;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
@@ -26,9 +28,11 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import net.sourceforge.frcsimulator.gui.propertyeditor.BooleanPropertyEditor;
 import net.sourceforge.frcsimulator.gui.propertyeditor.BytePropertyEditor;
+import net.sourceforge.frcsimulator.gui.propertyeditor.IntegerPropertyEditor;
 import net.sourceforge.frcsimulator.gui.propertyeditor.PropertyEditor;
 import net.sourceforge.frcsimulator.internals.CRIO;
 import net.sourceforge.frcsimulator.internals.FrcBotSimComponent;
+import net.sourceforge.frcsimulator.internals.FrcBotSimProperties;
 import net.sourceforge.frcsimulator.internals.SimulatedBot;
 import net.sourceforge.frcsimulator.mistware.Simulator;
 
@@ -62,6 +66,7 @@ public class SimulatorControlFrame extends JFrame {
 		//// Property Editors ////
 		PropertyEditor.register(Boolean.class, BooleanPropertyEditor.class);
                 PropertyEditor.register(Byte.class, BytePropertyEditor.class);
+                PropertyEditor.register(Integer.class, IntegerPropertyEditor.class);
 		//// Initialize the window ////
 		setLayout(new BorderLayout());
 		setSize(new Dimension(500,500));
@@ -134,11 +139,15 @@ public class SimulatorControlFrame extends JFrame {
 						try {
 							String key = path[2].toString();
 							FrcBotSimComponent component = FrcBotSimComponent.class.cast(DefaultMutableTreeNode.class.cast(path[1]).getUserObject());
-							editor = PropertyEditor.getEditor(key, component.getSimProperties().get(key));
+                                                        if(!component.getSimProperties().get(key).get().getClass().isArray() && !component.getSimProperties().get(key).get().getClass().equals(FrcBotSimProperties.class)){
+                                                        editor = PropertyEditor.getEditor(key, component.getSimProperties().get(key));
+                                                        } else{editor = PropertyEditor.nullPropertyEditor;}
 						} catch (Exception ex) {
 							logger.log(Level.WARNING, "Could not get an editor for the component", ex);
 						}
-					}
+					} else if(path.length > 3){
+                                            editor = PropertyEditor.nullPropertyEditor;
+                                        }
 				} else {
 					editor = PropertyEditor.nullPropertyEditor;
 				}
@@ -169,14 +178,119 @@ public class SimulatorControlFrame extends JFrame {
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode("Simulator");
 		for (FrcBotSimComponent component:SimulatedBot.getSimComponents()) {
 			DefaultMutableTreeNode branch = new DefaultMutableTreeNode(component);
-			for (String key:component.getSimProperties().keySet()) {
+                        recurseNodes(branch,component.getSimProperties());
+			/*for (String key:component.getSimProperties().keySet()) {
 				DefaultMutableTreeNode leaf = new DefaultMutableTreeNode(key);
 				branch.add(leaf);
-			}
+			}*/
 			root.add(branch);
 		}
 		componentTree.setModel(new DefaultTreeModel(root));
 	}
+        private void recurseNodes(DefaultMutableTreeNode branch, FrcBotSimProperties properties){
+            for(String key : properties.keySet()){
+                DefaultMutableTreeNode branchBranch = new DefaultMutableTreeNode(key);
+                branch.add(branchBranch);
+                if(properties.get(key).get().getClass().getName().equals(boolean[].class.getName())){
+                    for(int i = 0; i < ((boolean[])properties.get(key).get()).length; i++){
+                        branchBranch.add(new DefaultMutableTreeNode(i));
+                    }
+                }
+                else if(properties.get(key).get().getClass().getName().equals(byte[].class.getName())){
+                    for(int i = 0; i < ((byte[])properties.get(key).get()).length; i++){
+                        branchBranch.add(new DefaultMutableTreeNode(i));
+                    }
+                }
+                else if(properties.get(key).get().getClass().getName().equals(char[].class.getName())){
+                    for(int i = 0; i < ((char[])properties.get(key).get()).length; i++){
+                        branchBranch.add(new DefaultMutableTreeNode(i));
+                    }
+                }
+                else if(properties.get(key).get().getClass().getName().equals(short[].class.getName())){
+                    for(int i = 0; i < ((short[])properties.get(key).get()).length; i++){
+                        branchBranch.add(new DefaultMutableTreeNode(i));
+                    }
+                }
+                else if(properties.get(key).get().getClass().getName().equals(int[].class.getName())){
+                    for(int i = 0; i < ((int[])properties.get(key).get()).length; i++){
+                        branchBranch.add(new DefaultMutableTreeNode(i));
+                    }
+                }
+                else if(properties.get(key).get().getClass().getName().equals(long[].class.getName())){
+                    for(int i = 0; i < ((long[])properties.get(key).get()).length; i++){
+                        branchBranch.add(new DefaultMutableTreeNode(i));
+                    }
+                }
+                else if(properties.get(key).get().getClass().getName().equals(float[].class.getName())){
+                    for(int i = 0; i < ((float[])properties.get(key).get()).length; i++){
+                        branchBranch.add(new DefaultMutableTreeNode(i));
+                    }
+                }
+                else if(properties.get(key).get().getClass().getName().equals(double[].class.getName())){
+                    for(int i = 0; i < ((double[])properties.get(key).get()).length; i++){
+                        branchBranch.add(new DefaultMutableTreeNode(i));
+                    }
+                }
+                else if(properties.get(key).get().getClass().isArray()){
+                    recurseNodes(branchBranch, (Object[])properties.get(key).get());
+                }
+                else if(properties.get(key).get().getClass().getName().equals(FrcBotSimProperties.class.getName())){
+                    recurseNodes(branchBranch, (FrcBotSimProperties)properties.get(key).get());
+                }
+            }
+        }
+        private void recurseNodes(DefaultMutableTreeNode branch, Object[] array){
+                for(int i = 0; i < array.length; i++){
+                DefaultMutableTreeNode branchBranch = new DefaultMutableTreeNode(array[i]);
+                branch.add(branchBranch);
+                if(array[i].getClass().getName().equals(boolean[].class.getName())){
+                    for(int j = 0; j < ((boolean[])array[i]).length; j++){
+                        branchBranch.add(new DefaultMutableTreeNode(j));
+                    }
+                }
+                else if(array[i].getClass().getName().equals(byte[].class.getName())){
+                    for(int j = 0; j < ((byte[])array[i]).length; j++){
+                        branchBranch.add(new DefaultMutableTreeNode(j));
+                    }
+                }
+                else if(array[i].getClass().getName().equals(char[].class.getName())){
+                    for(int j = 0; j < ((char[])array[i]).length; j++){
+                        branchBranch.add(new DefaultMutableTreeNode(j));
+                    }
+                }
+                else if(array[i].getClass().getName().equals(short[].class.getName())){
+                    for(int j = 0; j < ((short[])array[i]).length; j++){
+                        branchBranch.add(new DefaultMutableTreeNode(j));
+                    }
+                }
+                else if(array[i].getClass().getName().equals(int[].class.getName())){
+                    for(int j = 0; j < ((int[])array[i]).length; j++){
+                        branchBranch.add(new DefaultMutableTreeNode(j));
+                    }
+                }
+                else if(array[i].getClass().getName().equals(long[].class.getName())){
+                    for(int j = 0; j < ((long[])array[i]).length; j++){
+                        branchBranch.add(new DefaultMutableTreeNode(j));
+                    }
+                }
+                else if(array[i].getClass().getName().equals(float[].class.getName())){
+                    for(int j = 0; j < ((float[])array[i]).length; j++){
+                        branchBranch.add(new DefaultMutableTreeNode(j));
+                    }
+                }
+                else if(array[i].getClass().getName().equals(double[].class.getName())){
+                    for(int j = 0; j < ((double[])array[i]).length; j++){
+                        branchBranch.add(new DefaultMutableTreeNode(j));
+                    }
+                }
+                else if(array[i].getClass().isArray()){
+                    recurseNodes(branchBranch, (Object[])array[i]);
+                }
+                else if(array[i].getClass().getName().equals(FrcBotSimProperties.class.getName())){
+                    recurseNodes(branchBranch, (FrcBotSimProperties)array[i]);
+                }
+            }
+        }
 
 	public void initSimulator (String action) {
 		//// Initialize the simulator ////
