@@ -26,10 +26,7 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import net.sourceforge.frcsimulator.gui.propertyeditor.BooleanPropertyEditor;
-import net.sourceforge.frcsimulator.gui.propertyeditor.BytePropertyEditor;
-import net.sourceforge.frcsimulator.gui.propertyeditor.IntegerPropertyEditor;
-import net.sourceforge.frcsimulator.gui.propertyeditor.PropertyEditor;
+import net.sourceforge.frcsimulator.gui.propertyeditor.*;
 import net.sourceforge.frcsimulator.internals.CRIO;
 import net.sourceforge.frcsimulator.internals.FrcBotSimComponent;
 import net.sourceforge.frcsimulator.internals.FrcBotSimProperties;
@@ -66,7 +63,10 @@ public class SimulatorControlFrame extends JFrame {
 		//// Property Editors ////
 		PropertyEditor.register(Boolean.class, BooleanPropertyEditor.class);
                 PropertyEditor.register(Byte.class, BytePropertyEditor.class);
+                PropertyEditor.register(Character.class, CharacterPropertyEditor.class);
+                PropertyEditor.register(Short.class, ShortPropertyEditor.class);
                 PropertyEditor.register(Integer.class, IntegerPropertyEditor.class);
+                PropertyEditor.register(Long.class, LongPropertyEditor.class);
 		//// Initialize the window ////
 		setLayout(new BorderLayout());
 		setSize(new Dimension(500,500));
@@ -157,8 +157,8 @@ public class SimulatorControlFrame extends JFrame {
 		editor = PropertyEditor.nullPropertyEditor;
 		editor.initialize(null, null);
 		propertyPane=new JSplitPane(JSplitPane.VERTICAL_SPLIT,new JScrollPane(componentTree),editor);
-		add(new JSplitPane(JSplitPane.VERTICAL_SPLIT,outScroll,
-					propertyPane));
+		propertyPane.setPreferredSize(new Dimension(getWidth(),propertyPane.getHeight()*2));
+                add(new JSplitPane(JSplitPane.VERTICAL_SPLIT,outScroll,propertyPane));
 		consoleStream = new PrintStream(new TextAreaStream(console));
 		startButton.addActionListener(new ActionListener() {
 			@Override
