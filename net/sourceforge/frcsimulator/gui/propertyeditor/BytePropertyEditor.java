@@ -16,8 +16,8 @@ import net.sourceforge.frcsimulator.internals.FrcBotSimProperty;
 public class BytePropertyEditor extends PropertyEditor<Byte> {
 	protected JCheckBox[] n_checkboxes = new JCheckBox[8];
 	protected FrcBotSimProperty<Byte> n_property;
-        protected boolean[] n_bits = new boolean[8];
-        protected static int bitIndex;
+	protected boolean[] n_bits = new boolean[8];
+	protected static int bitIndex;
     @Override
 	public void initialize(String key, FrcBotSimProperty<Byte> iProperty) {
 		n_property = iProperty;

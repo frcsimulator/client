@@ -10,8 +10,6 @@ import java.awt.event.*;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.lang.reflect.Array;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
@@ -22,10 +20,7 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import net.sourceforge.frcsimulator.gui.propertyeditor.*;
-import net.sourceforge.frcsimulator.internals.CRIO;
-import net.sourceforge.frcsimulator.internals.FrcBotSimComponent;
-import net.sourceforge.frcsimulator.internals.FrcBotSimProperties;
-import net.sourceforge.frcsimulator.internals.SimulatedBot;
+import net.sourceforge.frcsimulator.internals.*;
 import net.sourceforge.frcsimulator.mistware.Simulator;
 
 /**
@@ -33,11 +28,12 @@ import net.sourceforge.frcsimulator.mistware.Simulator;
  * @author wolf
  */
 public class SimulatorControlFrame extends JFrame {
+
 	protected Simulator simulator;
 	protected String midletName;
 	protected static final Logger logger = Logger.getLogger(SimulatorControlFrame.class.getName());
 	protected static JButton startButton = new JButton("Start simulator");
-        protected JScrollBar scrollBar = null;
+	protected JScrollBar scrollBar = null;
 	protected JMenuBar menuBar;
 	protected JMenu fileMenu, fileExamplesMenuItem, helpMenu;
 	protected JMenuItem fileQuitMenuItem, helpAboutMenuItem;
@@ -47,36 +43,37 @@ public class SimulatorControlFrame extends JFrame {
 	protected PrintStream consoleStream;
 	protected PropertyEditor editor;
 	protected JSplitPane propertyPane;
-        protected JScrollPane outScroll;
+    protected JScrollPane outScroll;
 	protected String[][] examples = {{"MIDlet","net.sourceforge.frcsimulator.test.FRCBotMIDlet"},
 			{"RobotBase","net.sourceforge.frcsimulator.test.FRCBotRobotBase"},
 			{"SimpleRobot","edu.wpi.first.wpilibj.SimpleRobot"},
 			{"IterativeRobot","edu.wpi.first.wpilibj.IterativeRobot"}};
 	public SimulatorControlFrame(String testCase) {
-		super("Frc Simulator - "+testCase);
+		super("Frc Simulator - " + testCase);
 		midletName = testCase;
 		Logger.getLogger(SimulatorControlFrame.class.getName()).addHandler(new GuiHandler());
 		//// Property Editors ////
 		PropertyEditor.register(Boolean.class, BooleanPropertyEditor.class);
-                PropertyEditor.register(Byte.class, BytePropertyEditor.class);
-                PropertyEditor.register(Character.class, CharacterPropertyEditor.class);
-                PropertyEditor.register(Short.class, ShortPropertyEditor.class);
-                PropertyEditor.register(Integer.class, IntegerPropertyEditor.class);
-                PropertyEditor.register(Long.class, LongPropertyEditor.class);
+		PropertyEditor.register(Byte.class, BytePropertyEditor.class);
+		PropertyEditor.register(Character.class, CharacterPropertyEditor.class);
+		PropertyEditor.register(Short.class, ShortPropertyEditor.class);
+		PropertyEditor.register(Integer.class, IntegerPropertyEditor.class);
+		PropertyEditor.register(Long.class, LongPropertyEditor.class);
 		//// Initialize the window ////
 		setLayout(new BorderLayout());
-		setSize(new Dimension(500,500));
+		setSize(new Dimension(500, 500));
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		add(startButton, BorderLayout.NORTH);
 		menuBar = new JMenuBar();
 		fileMenu = new JMenu("File");
 		fileExamplesMenuItem = new JMenu("Examples");
-		for (String[] example:examples) {
-			fileExamplesMenuItem.add(new JMenuItem(new ExampleSelectAction(example[0],example[1])));
+		for (String[] example : examples) {
+			fileExamplesMenuItem.add(new JMenuItem(new ExampleSelectAction(example[0], example[1])));
 		}
 		fileMenu.add(fileExamplesMenuItem);
 		fileDebugCheckboxMenuItem = new JCheckBoxMenuItem("Enable debug messages");
 		fileDebugCheckboxMenuItem.addChangeListener(new ChangeListener() {
+
 			@Override
 			public void stateChanged(ChangeEvent ce) {
 				CRIO.getInstance().setDebugging(fileDebugCheckboxMenuItem.isSelected());
@@ -84,18 +81,20 @@ public class SimulatorControlFrame extends JFrame {
 		});
 		//fileDebugCheckboxMenuItem.setSelected(true);
 		fileMenu.add(fileDebugCheckboxMenuItem);
-		JMenuItem fileRefreshMenuItem = new JMenuItem("Refresh Components",'R');
+		JMenuItem fileRefreshMenuItem = new JMenuItem("Refresh Components", 'R');
 		fileRefreshMenuItem.setAccelerator(KeyStroke.getKeyStroke('R', InputEvent.CTRL_DOWN_MASK));
 		fileRefreshMenuItem.addActionListener(new ActionListener() {
+
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 				refreshProperties();
 			}
 		});
 		fileMenu.add(fileRefreshMenuItem);
-		fileQuitMenuItem = new JMenuItem("Quit",'Q');
+		fileQuitMenuItem = new JMenuItem("Quit", 'Q');
 		fileQuitMenuItem.setAccelerator(KeyStroke.getKeyStroke('Q', InputEvent.CTRL_DOWN_MASK));
 		fileQuitMenuItem.addActionListener(new ActionListener() {
+
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 				System.exit(FrcBotSimTest.E_NONE);
@@ -103,9 +102,10 @@ public class SimulatorControlFrame extends JFrame {
 		});
 		fileMenu.add(fileQuitMenuItem);
 		menuBar.add(fileMenu);
-		helpMenu=new JMenu("Help");
-		helpAboutMenuItem=new JMenuItem("About",'A');
+		helpMenu = new JMenu("Help");
+		helpAboutMenuItem = new JMenuItem("About", 'A');
 		helpAboutMenuItem.addActionListener(new ActionListener() {
+
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 				JDialog aboutBox = new JDialog();
@@ -120,7 +120,7 @@ public class SimulatorControlFrame extends JFrame {
 		setJMenuBar(menuBar);
 		console = new JTextArea();
 		console.setEditable(false);
-		console.setMargin(new Insets(3,3,3,3));
+		console.setMargin(new Insets(3, 3, 3, 3));
 		outScroll = new JScrollPane(console);
                 scrollBar=outScroll.getVerticalScrollBar();
 		componentTree = new JTree(new JTree.DynamicUtilTreeNode("Components",SimulatedBot.getSimComponents()));
@@ -140,23 +140,41 @@ public class SimulatorControlFrame extends JFrame {
                 });
 		componentTree.setRootVisible(false);
 		componentTree.addTreeSelectionListener(new TreeSelectionListener() {
+
 			@Override
 			public void valueChanged(TreeSelectionEvent tse) {
 				if (tse.isAddedPath()) {
 					Object[] path = componentTree.getSelectionPath().getPath();
+					/*int i = 0;
+					FrcBotSimProperty property;
+					for (Object node:path) {
+						i++;
+						if () {  // node is property
+							if ()
+						}
+						if (i == path.length) { // Last node
+							try {
+								editor = PropertyEditor.getEditor(node.toString(),property);
+							} catch (Exception ex) {
+								logger.log(Level.WARNING, "Could not get an editor for the component", ex);
+							}
+						}
+					}*/
 					if (path.length == 3) {
 						try {
 							String key = path[2].toString();
 							FrcBotSimComponent component = FrcBotSimComponent.class.cast(DefaultMutableTreeNode.class.cast(path[1]).getUserObject());
-                                                        if(!component.getSimProperties().get(key).get().getClass().isArray() && !component.getSimProperties().get(key).get().getClass().equals(FrcBotSimProperties.class)){
-                                                        editor = PropertyEditor.getEditor(key, component.getSimProperties().get(key));
-                                                        } else{editor = PropertyEditor.nullPropertyEditor;}
+							if (!component.getSimProperties().get(key).get().getClass().isArray() && !component.getSimProperties().get(key).get().getClass().equals(FrcBotSimProperties.class)) {
+								editor = PropertyEditor.getEditor(key, component.getSimProperties().get(key));
+							} else {
+								editor = PropertyEditor.nullPropertyEditor;
+							}
 						} catch (Exception ex) {
 							logger.log(Level.WARNING, "Could not get an editor for the component", ex);
 						}
-					} else if(path.length > 3){
-                                            editor = PropertyEditor.nullPropertyEditor;
-                                        }
+					} else if (path.length > 3) {
+						editor = PropertyEditor.nullPropertyEditor;
+					}
 				} else {
 					editor = PropertyEditor.nullPropertyEditor;
 				}
@@ -179,6 +197,7 @@ public class SimulatorControlFrame extends JFrame {
                 add(propertyPane);
 		consoleStream = new PrintStream(new TextAreaStream(console));
 		startButton.addActionListener(new ActionListener() {
+
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 				initSimulator(midletName);
@@ -194,13 +213,15 @@ public class SimulatorControlFrame extends JFrame {
 
 	private void refreshProperties() {
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode("Simulator");
-		for (FrcBotSimComponent component:SimulatedBot.getSimComponents()) {
+		for (FrcBotSimComponent component : SimulatedBot.getSimComponents()) {
 			DefaultMutableTreeNode branch = new DefaultMutableTreeNode(component);
-                        recurseNodes(branch,component.getSimProperties());
-			/*for (String key:component.getSimProperties().keySet()) {
-				DefaultMutableTreeNode leaf = new DefaultMutableTreeNode(key);
-				branch.add(leaf);
-			}*/
+			recurseNodes(branch, component.getSimProperties());
+			/*
+			 * for (String key:component.getSimProperties().keySet()) {
+			 * DefaultMutableTreeNode leaf = new DefaultMutableTreeNode(key);
+			 * branch.add(leaf);
+			}
+			 */
 			root.add(branch);
 		}
 		componentTree.setModel(new DefaultTreeModel(root));
@@ -377,7 +398,7 @@ public class SimulatorControlFrame extends JFrame {
             }
         }
 
-	public void initSimulator (String action) {
+	public void initSimulator(String action) {
 		//// Initialize the simulator ////
 		try {
 			simulator = new Simulator(action);
@@ -395,7 +416,7 @@ public class SimulatorControlFrame extends JFrame {
 	}
 
 	public static void simStateChange(Simulator.Status status, Simulator.Status oldStatus) {
-		startButton.setText("Simulator status: "+status.toString());
+		startButton.setText("Simulator status: " + status.toString());
 		if (status.equals(Simulator.Status.RUNNING)) {
 			startButton.setBackground(Color.GREEN);
 		} else if (status.equals(Simulator.Status.INITIALIZING)) {
@@ -406,28 +427,36 @@ public class SimulatorControlFrame extends JFrame {
 			startButton.setBackground(null);
 		}
 	}
+
 	public class TextAreaStream extends OutputStream {
+
 		protected JTextArea area;
+
 		public TextAreaStream(JTextArea textArea) {
 			area = textArea;
 		}
+
 		@Override
 		public void write(int i) throws IOException {
 			area.append(new String(Character.toChars(i)));
-                        scrollBar.setValue(scrollBar.getMaximum()+scrollBar.getVisibleAmount());
+			scrollBar.setValue(scrollBar.getMaximum() + scrollBar.getVisibleAmount());
 		}
 	}
+
 	private class ExampleSelectAction extends AbstractAction {
+
 		protected String midlet;
+
 		public ExampleSelectAction(String title, String midletClass) {
 			super(title);
 			midlet = midletClass;
 		}
+
 		@Override
 		public void actionPerformed(ActionEvent ae) {
 			if (simulator == null) {
 				midletName = midlet;
-				setTitle("Frc Simulator - "+midletName);
+				setTitle("Frc Simulator - " + midletName);
 			} else {
 				logger.warning("Simulator already running; cannot set class.");
 			}
