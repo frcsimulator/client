@@ -24,6 +24,7 @@ public class ShortPropertyEditor extends PropertyEditor<Short> {
 	public void initialize(String key, FrcBotSimProperty<Short> iProperty) {
 		property = iProperty;
 		n_decSpinner = new JSpinner();
+                n_decSpinner.setValue(property.get());
                 n_hexLabel=new JLabel("HEX: "+Integer.toHexString(property.get().intValue()).toUpperCase());
                 n_octLabel=new JLabel("OCT: "+Integer.toOctalString(property.get().intValue()));
                 n_binLabel=new JLabel("BIN: "+Integer.toOctalString(property.get().intValue()));

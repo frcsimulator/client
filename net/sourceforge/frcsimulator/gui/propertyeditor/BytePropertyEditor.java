@@ -23,6 +23,7 @@ public class BytePropertyEditor extends PropertyEditor<Byte> {
 		n_property = iProperty;
                 for(bitIndex = 0; bitIndex < 8;bitIndex++){
                     n_checkboxes[bitIndex] = new JCheckBox();
+                    n_checkboxes[bitIndex].setSelected((n_property.get()&(byte)((char)1<<bitIndex))==(byte)((char)1<<bitIndex));
                     n_checkboxes[bitIndex].addChangeListener(new ChangeListener(){
                         public void stateChanged(ChangeEvent ce){
                             n_property.set((byte)(n_property.get()^((char)1<<bitIndex)));

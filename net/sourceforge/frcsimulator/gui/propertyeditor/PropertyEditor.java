@@ -30,4 +30,9 @@ public abstract class PropertyEditor<T> extends JPanel {
 		editor.initialize(key, property);
 		return editor;
 	}
+        public PropertyEditor(){
+            //setPreferredSize(getMinimumSize());
+            //setSize(getMinimumSize());
+            //setMaximumSize(getMinimumSize());
+        }
 }

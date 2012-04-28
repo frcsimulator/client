@@ -5,13 +5,8 @@
 package net.sourceforge.frcsimulator.gui;
 
 import frcbotsimtest.FrcBotSimTest;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
+import java.awt.*;
+import java.awt.event.*;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -52,6 +47,7 @@ public class SimulatorControlFrame extends JFrame {
 	protected PrintStream consoleStream;
 	protected PropertyEditor editor;
 	protected JSplitPane propertyPane;
+        protected JScrollPane outScroll;
 	protected String[][] examples = {{"MIDlet","net.sourceforge.frcsimulator.test.FRCBotMIDlet"},
 			{"RobotBase","net.sourceforge.frcsimulator.test.FRCBotRobotBase"},
 			{"SimpleRobot","edu.wpi.first.wpilibj.SimpleRobot"},
@@ -71,7 +67,7 @@ public class SimulatorControlFrame extends JFrame {
 		setLayout(new BorderLayout());
 		setSize(new Dimension(500,500));
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		add(startButton,BorderLayout.NORTH);
+		add(startButton, BorderLayout.NORTH);
 		menuBar = new JMenuBar();
 		fileMenu = new JMenu("File");
 		fileExamplesMenuItem = new JMenu("Examples");
@@ -86,7 +82,7 @@ public class SimulatorControlFrame extends JFrame {
 				CRIO.getInstance().setDebugging(fileDebugCheckboxMenuItem.isSelected());
 			}
 		});
-		fileDebugCheckboxMenuItem.setSelected(true);
+		//fileDebugCheckboxMenuItem.setSelected(true);
 		fileMenu.add(fileDebugCheckboxMenuItem);
 		JMenuItem fileRefreshMenuItem = new JMenuItem("Refresh Components",'R');
 		fileRefreshMenuItem.setAccelerator(KeyStroke.getKeyStroke('R', InputEvent.CTRL_DOWN_MASK));
@@ -125,10 +121,23 @@ public class SimulatorControlFrame extends JFrame {
 		console = new JTextArea();
 		console.setEditable(false);
 		console.setMargin(new Insets(3,3,3,3));
-		JScrollPane outScroll = new JScrollPane(console);
-		outScroll.setMinimumSize(new Dimension(getMinimumSize().width,(int)(getHeight()*.4)));
+		outScroll = new JScrollPane(console);
                 scrollBar=outScroll.getVerticalScrollBar();
 		componentTree = new JTree(new JTree.DynamicUtilTreeNode("Components",SimulatedBot.getSimComponents()));
+                componentTree.setMinimumSize(new Dimension(componentTree.getMinimumSize().width,getHeight()/2));
+                addComponentListener(new ComponentAdapter(){
+                    @Override
+                    public void componentResized(ComponentEvent ce){
+                        if(outScroll.getWidth() < getWidth()/2){
+                            outScroll.setSize(new Dimension(getWidth()/2,outScroll.getHeight()));
+                        }
+                        outScroll.setMinimumSize(new Dimension(getWidth()/2,outScroll.getMinimumSize().height));
+                        if(propertyPane.getRightComponent().getWidth() > getWidth()/2){
+                            propertyPane.getRightComponent().setSize(new Dimension(getWidth()/2,propertyPane.getHeight()));
+                        }
+                        propertyPane.setMaximumSize(new Dimension(getWidth()/2,propertyPane.getMaximumSize().height));
+                    }
+                });
 		componentTree.setRootVisible(false);
 		componentTree.addTreeSelectionListener(new TreeSelectionListener() {
 			@Override
@@ -151,14 +160,23 @@ public class SimulatorControlFrame extends JFrame {
 				} else {
 					editor = PropertyEditor.nullPropertyEditor;
 				}
-				propertyPane.setBottomComponent(editor);
+                                ((JSplitPane)propertyPane.getRightComponent()).setBottomComponent(editor);
+                                editor.setSize(editor.getMinimumSize());
+                                //componentTree.setSize(propertyPane.getWidth()-editor.getWidth(),propertyPane.getHeight()-editor.getHeight());
+                                //propertyPane.getBottomComponent().setSize(propertyPane.getBottomComponent().getMinimumSize());
+                                //propertyPane.getTopComponent().setSize(propertyPane.getTopComponent().getMaximumSize());plitPane(JSplitPane.HORIZONTAL_SPLIT,
 			}
 		});
 		editor = PropertyEditor.nullPropertyEditor;
 		editor.initialize(null, null);
-		propertyPane=new JSplitPane(JSplitPane.VERTICAL_SPLIT,new JScrollPane(componentTree),editor);
-		propertyPane.setPreferredSize(new Dimension(getWidth(),propertyPane.getHeight()*2));
-                add(new JSplitPane(JSplitPane.VERTICAL_SPLIT,outScroll,propertyPane));
+                outScroll.setSize(getWidth()/2,outScroll.getHeight());
+                outScroll.setPreferredSize(new Dimension(getWidth()/2,outScroll.getHeight()));
+		propertyPane=new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, outScroll, new JSplitPane(JSplitPane.VERTICAL_SPLIT,new JScrollPane(componentTree),editor));
+                /*propertyPane.add(editor);
+                propertyPane.add(new JScrollPane(componentTree));*/
+                //propertyPane.getTopComponent().setPreferredSize(propertyPane.getTopComponent().getMaximumSize());
+		//propertyPane.setPreferredSize(propertyPane.getMaximumSize());
+                add(propertyPane);
 		consoleStream = new PrintStream(new TextAreaStream(console));
 		startButton.addActionListener(new ActionListener() {
 			@Override
@@ -191,6 +209,7 @@ public class SimulatorControlFrame extends JFrame {
             for(String key : properties.keySet()){
                 DefaultMutableTreeNode branchBranch = new DefaultMutableTreeNode(key);
                 branch.add(branchBranch);
+                try{
                 if(properties.get(key).get().getClass().getName().equals(boolean[].class.getName())){
                     for(int i = 0; i < ((boolean[])properties.get(key).get()).length; i++){
                         branchBranch.add(new DefaultMutableTreeNode(i));
@@ -237,12 +256,14 @@ public class SimulatorControlFrame extends JFrame {
                 else if(properties.get(key).get().getClass().getName().equals(FrcBotSimProperties.class.getName())){
                     recurseNodes(branchBranch, (FrcBotSimProperties)properties.get(key).get());
                 }
+                } catch(NullPointerException npe){}
             }
         }
         private void recurseNodes(DefaultMutableTreeNode branch, Object[] array){
                 for(int i = 0; i < array.length; i++){
                 DefaultMutableTreeNode branchBranch = new DefaultMutableTreeNode(array[i]);
                 branch.add(branchBranch);
+                try{
                 if(array[i].getClass().getName().equals(boolean[].class.getName())){
                     for(int j = 0; j < ((boolean[])array[i]).length; j++){
                         branchBranch.add(new DefaultMutableTreeNode(j));
@@ -289,6 +310,7 @@ public class SimulatorControlFrame extends JFrame {
                 else if(array[i].getClass().getName().equals(FrcBotSimProperties.class.getName())){
                     recurseNodes(branchBranch, (FrcBotSimProperties)array[i]);
                 }
+                } catch(NullPointerException npe){}
             }
         }
 

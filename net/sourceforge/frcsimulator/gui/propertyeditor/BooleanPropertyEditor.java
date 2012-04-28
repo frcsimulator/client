@@ -20,6 +20,7 @@ public class BooleanPropertyEditor extends PropertyEditor<Boolean> {
 	public void initialize(String key, FrcBotSimProperty<Boolean> iProperty) {
 		property = iProperty;
 		checkbox = new JCheckBox(key);
+                checkbox.setSelected(property.get());
 		checkbox.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent ce) {

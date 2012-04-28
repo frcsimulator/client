@@ -24,6 +24,7 @@ public class IntegerPropertyEditor extends PropertyEditor<Integer> {
 	public void initialize(String key, FrcBotSimProperty<Integer> iProperty) {
 		property = iProperty;
 		n_decSpinner = new JSpinner();
+                n_decSpinner.setValue(property.get());
                 n_hexLabel=new JLabel("HEX: "+Integer.toHexString(property.get()).toUpperCase());
                 n_octLabel=new JLabel("OCT: "+Integer.toOctalString(property.get()));
                 n_binLabel=new JLabel("BIN: "+Integer.toBinaryString(property.get()));
