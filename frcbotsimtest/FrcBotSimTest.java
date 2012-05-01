@@ -8,6 +8,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 import java.util.logging.StreamHandler;
+import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import net.sourceforge.frcsimulator.test.*;
 import net.sourceforge.frcsimulator.gui.SimulatorControlFrame;
@@ -96,9 +97,9 @@ public class FrcBotSimTest {
 				@Override
 				public void run() {
 					SimulatorControlFrame simulatorControlFrame = new SimulatorControlFrame(testCase);
-			synchronized (lock) {
-			lock.notify();
-			}
+					synchronized (lock) {
+						lock.notify();
+					}
 				}
 			});
 			try {

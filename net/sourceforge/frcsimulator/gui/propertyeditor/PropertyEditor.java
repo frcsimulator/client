@@ -20,6 +20,7 @@ public abstract class PropertyEditor<T> extends JPanel {
 		editors.put(propertyClass, editor);
 	}
 	public static final PropertyEditor getEditor(String key, FrcBotSimProperty property) throws InstantiationException, IllegalAccessException {
+		if (property == null) return nullPropertyEditor;
 		Class<? extends PropertyEditor> editorClass = editors.get(property.get().getClass());
 		PropertyEditor editor;
 		if (editorClass == null) {
