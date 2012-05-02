@@ -21,7 +21,7 @@ public class BytePropertyEditor extends PropertyEditor<Byte> {
     @Override
 	public void initialize(String key, FrcBotSimProperty<Byte> iProperty) {
 		n_property = iProperty;
-                for(bitIndex = 0; bitIndex < 8;bitIndex++){
+                for(bitIndex = 7; bitIndex >= 0;bitIndex--){
                     n_checkboxes[bitIndex] = new JCheckBox();
                     n_checkboxes[bitIndex].setSelected((n_property.get()&(byte)((char)1<<bitIndex))==(byte)((char)1<<bitIndex));
                     n_checkboxes[bitIndex].addChangeListener(new ChangeListener(){
