@@ -77,6 +77,7 @@ public class SimulatorControlFrame extends JFrame {
 		}
 		fileMenu.add(fileExamplesMenuItem);
 		fileDebugCheckboxMenuItem = new JCheckBoxMenuItem("Enable debug messages");
+		fileDebugCheckboxMenuItem.setAccelerator(KeyStroke.getKeyStroke('D', InputEvent.CTRL_DOWN_MASK));
 		fileDebugCheckboxMenuItem.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent ce) {
@@ -106,13 +107,23 @@ public class SimulatorControlFrame extends JFrame {
 		menuBar.add(fileMenu);
 		helpMenu = new JMenu("Help");
 		helpAboutMenuItem = new JMenuItem("About", 'A');
+		helpAboutMenuItem.setAccelerator(KeyStroke.getKeyStroke('I', InputEvent.CTRL_DOWN_MASK));
+		final JFrame frame=this;
 		helpAboutMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
-				JDialog aboutBox = new JDialog();
+				//TODO finish the about dialog
+				JDialog aboutBox = new JDialog(frame);
 				aboutBox.setTitle("About FRC Simulator");
-				aboutBox.add(new JLabel("FRC Simulator"));
+				aboutBox.setLayout(new GridLayout(0,1));
+				JLabel titleLabel=new JLabel("FRC Simulator",JLabel.CENTER);
+				titleLabel.setFont(new Font(Font.SERIF,Font.BOLD,24));
+				JLabel versionLabel=new JLabel("Subversion trunk",JLabel.CENTER);
+				versionLabel.setFont(new Font(Font.DIALOG,Font.ITALIC,12));
+				aboutBox.add(titleLabel);
+				aboutBox.add(versionLabel);
 				aboutBox.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+				aboutBox.setSize(500,500);
 				aboutBox.setVisible(true);
 			}
 		});
@@ -157,17 +168,19 @@ public class SimulatorControlFrame extends JFrame {
 								node = pathNode;
 							}
 							i++;
-							if (node == null || edit == null || ("Simulator".equals(edit) && FrcBotSimComponent.class.isAssignableFrom(node.getClass()))) {
+							if (node == null || edit == null || "Simulator".equals(edit) || FrcBotSimProperty.class.isAssignableFrom(node.getClass())) {
 								edit = node;
 							} else if (FrcBotSimComponent.class.isAssignableFrom(edit.getClass()) && String.class.isAssignableFrom(node.getClass())) {
 								edit = ((FrcBotSimComponent)edit).getSimProperties().get((String)node);
+							} else if (FrcBotSimProperty.class.isAssignableFrom(edit.getClass()) && (FrcBotSimProperties.class.isAssignableFrom(((FrcBotSimProperty)edit).get().getClass())) && String.class.isAssignableFrom(node.getClass())) {
+								edit = ((FrcBotSimProperties)((FrcBotSimProperty)edit).get()).get((String)node);
 							} else if (Integer.class.isAssignableFrom(node.getClass())) {
 								edit = new ArrayWrappingProperty<Object>(FrcBotSimProperty.class.cast(edit),Integer.decode(node.toString()));
 							} else {
-								edit = null;
+								edit = node;
 							}
 						}
-						if (FrcBotSimProperty.class.isAssignableFrom(edit.getClass())) {
+						if (edit != null && FrcBotSimProperty.class.isAssignableFrom(edit.getClass())) {
 							editor = PropertyEditor.getEditor(componentTree.getSelectionPath().getLastPathComponent().toString(),(FrcBotSimProperty)edit);
 						} else {
 							editor = PropertyEditor.nullPropertyEditor;

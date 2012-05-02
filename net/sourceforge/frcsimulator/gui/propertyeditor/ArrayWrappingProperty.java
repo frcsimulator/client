@@ -4,6 +4,7 @@
  */
 package net.sourceforge.frcsimulator.gui.propertyeditor;
 
+import java.lang.reflect.Array;
 import net.sourceforge.frcsimulator.internals.FrcBotSimProperty;
 
 /**
@@ -19,14 +20,14 @@ public class ArrayWrappingProperty<T> extends FrcBotSimProperty<T>{
 	}
 	@Override
 	public void set(T to) {
-		if (((T[])m_property.get())[m_index] != to) {
-			((T[])m_property.get())[m_index] = to;
+		if (get() != to) {
+			Array.set(m_property.get(),m_index,to);
 			triggerChange();
 		}
 	}
 	@Override
 	public T get() {
-		return ((T[])m_property.get())[m_index];
+		return (T)Array.get(m_property.get(),m_index);
 	}
 
 }
