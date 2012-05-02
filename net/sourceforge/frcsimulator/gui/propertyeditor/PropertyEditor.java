@@ -19,10 +19,10 @@ public abstract class PropertyEditor<T> extends JPanel {
 	public static final void register(Class<?> propertyClass, Class<? extends PropertyEditor> editor) {
 		editors.put(propertyClass, editor);
 	}
-	public static final PropertyEditor getEditor(String key, FrcBotSimProperty property) throws InstantiationException, IllegalAccessException {
+	public static final <U> PropertyEditor<U> getEditor(String key, FrcBotSimProperty property) throws InstantiationException, IllegalAccessException {
 		if (property == null) return nullPropertyEditor;
 		Class<? extends PropertyEditor> editorClass = editors.get(property.get().getClass());
-		PropertyEditor editor;
+		PropertyEditor<U> editor;
 		if (editorClass == null) {
 			editor = new UnknownPropertyEditor();
 		} else {
