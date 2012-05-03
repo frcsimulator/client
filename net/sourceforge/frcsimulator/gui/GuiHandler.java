@@ -4,7 +4,7 @@
  */
 package net.sourceforge.frcsimulator.gui;
 
-import frcbotsimtest.FrcBotSimTest;
+import net.sourceforge.frcsimulator.Client;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
@@ -31,7 +31,7 @@ class GuiHandler extends Handler {
 			JOptionPane.showMessageDialog(null,message,
 					"Fatal Error"+(lr.getMessage()==null?"":" - "+lr.getMessage()),
 					severe?JOptionPane.ERROR_MESSAGE:JOptionPane.WARNING_MESSAGE);
-			if (severe) System.exit(FrcBotSimTest.E_SIMFAIL);
+			if (severe) System.exit(Client.E_SIMFAIL);
 		}
 	}
 	@Override

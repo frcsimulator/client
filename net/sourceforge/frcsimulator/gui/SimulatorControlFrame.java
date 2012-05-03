@@ -4,13 +4,12 @@
  */
 package net.sourceforge.frcsimulator.gui;
 
-import frcbotsimtest.FrcBotSimTest;
+import net.sourceforge.frcsimulator.Client;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.lang.reflect.Array;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
@@ -59,11 +58,14 @@ public class SimulatorControlFrame extends JFrame {
 		logger.addHandler(new GuiHandler());
 		//// Property Editors ////
 		PropertyEditor.register(Boolean.class, BooleanPropertyEditor.class);
-		PropertyEditor.register(Byte.class, BytePropertyEditor.class);
 		PropertyEditor.register(Character.class, CharacterPropertyEditor.class);
-		PropertyEditor.register(Short.class, ShortPropertyEditor.class);
-		PropertyEditor.register(Integer.class, IntegerPropertyEditor.class);
-		PropertyEditor.register(Long.class, LongPropertyEditor.class);
+		PropertyEditor.register(Number.class, NumberPropertyEditor.class);
+		PropertyEditor.register(Byte.class, NumberPropertyEditor.class);
+		PropertyEditor.register(Short.class, NumberPropertyEditor.class);
+		PropertyEditor.register(Integer.class, NumberPropertyEditor.class);
+		PropertyEditor.register(Float.class, NumberPropertyEditor.class);
+		PropertyEditor.register(Long.class, NumberPropertyEditor.class);
+		PropertyEditor.register(Double.class, NumberPropertyEditor.class);
 		//// Initialize the window ////
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(new Dimension(500, 500));
@@ -100,7 +102,7 @@ public class SimulatorControlFrame extends JFrame {
 		fileQuitMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
-				System.exit(FrcBotSimTest.E_NONE);
+				System.exit(Client.E_NONE);
 			}
 		});
 		fileMenu.add(fileQuitMenuItem);
@@ -128,7 +130,7 @@ public class SimulatorControlFrame extends JFrame {
 			}
 		});
 		helpMenu.add(helpAboutMenuItem);
-		menuBar.add(helpMenu);
+		//menuBar.add(helpMenu);
 		setJMenuBar(menuBar);
 		console = new JTextArea();
 		console.setEditable(false);

@@ -2,15 +2,11 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package frcbotsimtest;
+package net.sourceforge.frcsimulator;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 import java.util.logging.StreamHandler;
-import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
-import net.sourceforge.frcsimulator.test.*;
 import net.sourceforge.frcsimulator.gui.SimulatorControlFrame;
 import net.sourceforge.frcsimulator.internals.CRIO;
 import net.sourceforge.frcsimulator.internals.CRIOModule;
@@ -21,7 +17,7 @@ import net.sourceforge.frcsimulator.mistware.Simulator;
  *
  * @author wolf
  */
-public class FrcBotSimTest {
+public class Client {
 	public static final int E_NONE = 0, E_BADARGS = 2, E_SIMFAIL = 5;
 	/**
 	 * @param args the command line arguments
@@ -69,7 +65,7 @@ public class FrcBotSimTest {
 		}
 		simulator.getLogger().addHandler(new StreamHandler(System.out,new SimpleFormatter()));
 		try {
-			simulator.onStatusChange(FrcBotSimTest.class.getMethod("simStateChangeCli", Simulator.Status.class, Simulator.Status.class));
+			simulator.onStatusChange(Client.class.getMethod("simStateChangeCli", Simulator.Status.class, Simulator.Status.class));
 		} catch (Exception e) {
 			System.err.println("Oops, couldn't add a status change hook to the simulator.");
 			e.printStackTrace();
