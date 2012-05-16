@@ -42,7 +42,7 @@ public class Arguments {
                 tempName = configStringArray[i].split("\\#")[0].substring(1);
                 if(Integer.parseInt(configStringArray[i].substring(configStringArray[i].indexOf("#"))) == 0){this.args.put(tempName, Arrays.binarySearch(args, tempName) < 1 ? 0 : 1);}
                 else{
-                    tempLengthDifference = Integer.MAX_VALUE;
+                    tempLengthDifference = args.length-Arrays.binarySearch(args,tempName);
                     for(int j = 0; j < configStringArray.length;j++){
                         tempLengthDifference = Arrays.binarySearch(args, configStringArray[j].split("\\#")[0].substring(1)) - Arrays.binarySearch(args,tempName) < tempLengthDifference &&Arrays.binarySearch(args, configStringArray[j].split("\\#")[0].substring(1)) - Arrays.binarySearch(args,tempName) > 0 ? Arrays.binarySearch(args, configStringArray[j].split("\\#")[0].substring(1)) - Arrays.binarySearch(args,tempName) : 0;
                     }
