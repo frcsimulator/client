@@ -14,7 +14,7 @@ import java.util.Properties;
  * @author bpylko2015
  */
 public class Arguments {
-    private String[] configStringArray;
+    /*private String[] configStringArray;
     private Properties args;
     private Comparator<String> argTypeComparator = new Comparator<String>(){
 
@@ -35,12 +35,13 @@ public class Arguments {
         String tempName = "";
         String tempParamList = "";
         int tempLengthDifference = 0;
+        if(args.length == 0){return;}
         for(int i = 0; i < configStringArray.length;i++){
-            if(configStringArray[i].matches("\\@[0-9][0-9]")){
+            if(!configStringArray[i].contains("#") && configStringArray[i].contains("@")){
                 this.args.put(configStringArray[i].substring(1),args[i]);
             } else{
                 tempName = configStringArray[i].split("\\#")[0].substring(1);
-                if(Integer.parseInt(configStringArray[i].substring(configStringArray[i].indexOf("#"))) == 0){this.args.put(tempName, Arrays.binarySearch(args, tempName) < 1 ? 0 : 1);}
+                if(Integer.parseInt(configStringArray[i].substring(configStringArray[i].indexOf("#")+1)) == 0){this.args.put(tempName, Arrays.binarySearch(args, tempName) < 1 ? 0 : 1);}
                 else{
                     tempLengthDifference = args.length-Arrays.binarySearch(args,tempName);
                     for(int j = 0; j < configStringArray.length;j++){
@@ -56,6 +57,20 @@ public class Arguments {
         }
     }
     public String get(String key){
-        return (String) args.get(key);
+        return args.getProperty(key) == null ? null : args.get(key).toString();
     }
+    */
+    String argv[];
+    public Arguments(String argv[], String configString){
+        this.argv = argv;
+    }
+    /**
+     * 
+     * @param key the argument to search for
+     * @param numArgs the number of
+     * @return The Array of parameters for the argument
+     */
+    //public String[] get(String argument, int numParams){
+    //    Arrays.search
+    //}
 }

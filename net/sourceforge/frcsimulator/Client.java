@@ -26,7 +26,7 @@ public class Client {
 		String testCase = "net.sourceforge.frcsimulator.test.FRCBotRobotBase";
 		boolean gui = false;
 		// Process arguments
-		if (args.length > 0) {
+		/*if (args.length > 0) {
 			if (args[0].startsWith("-")) { // It's a flag
 				if ("--gui".equals(args[0])) {
 					gui=true;
@@ -43,7 +43,7 @@ public class Client {
 		} else if (args.length > 2) {
 			System.err.println("Too many arguments!");
 			System.exit(E_BADARGS); // Bad arguments
-		}
+		}*/
         try {
             CRIO.getInstance().addModule(new CRIOModule(0x01), 1);
         } catch (ModuleException ex) {ex.printStackTrace();}
