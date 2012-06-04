@@ -4,6 +4,7 @@
  */
 package net.sourceforge.frcsimulator;
 
+import java.awt.GraphicsEnvironment;
 import java.util.logging.SimpleFormatter;
 import java.util.logging.StreamHandler;
 import javax.swing.SwingUtilities;
@@ -26,9 +27,11 @@ public class Client {
      */
     public static void main(String[] args) {
         Arguments arguments = new Arguments(args);
+		boolean gui = !GraphicsEnvironment.isHeadless();
         // Process arguments
-        boolean gui = arguments.get("gui") != null || arguments.get("g") != null;
-        String testCase = arguments.get("class") != null ? arguments.get("class")[0] : (arguments.get("c") != null ? arguments.get("c")[0] : "net.sourceforge.frcsimulator.test.FRCBotRobotBase");
+        if(arguments.get("gui") != null || arguments.get("g") != null) gui=true;
+		if(arguments.get("cli") != null || arguments.get("c") != null) gui=true;
+        String testCase = arguments.get("simulate") != null ? arguments.get("simulate")[0] : (arguments.get("s") != null ? arguments.get("s")[0] : "net.sourceforge.frcsimulator.test.FRCBotRobotBase");
         try {
             CRIO.getInstance().addModule(new CRIOModule(0x01), 1);
         } catch (ModuleException ex) {
