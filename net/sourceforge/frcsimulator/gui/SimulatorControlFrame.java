@@ -245,6 +245,7 @@ public class SimulatorControlFrame extends JFrame {
 	}
 
 	// TODO RecurseNodes is *extremely* repetitive--is there any way to simplify this?
+	// I don't think so safely, unfortunately.
 	private void recurseNodes(DefaultMutableTreeNode branch, FrcBotSimComponent component) {
 		for (String key : component.getSimProperties().keySet()) {
 			DefaultMutableTreeNode branchBranch = new DefaultMutableTreeNode(key);
