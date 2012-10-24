@@ -10,6 +10,7 @@ import java.util.logging.StreamHandler;
 import javax.swing.SwingUtilities;
 import net.sourceforge.frcsimulator.Arguments;
 import net.sourceforge.frcsimulator.gui.SimulatorControlFrame;
+import net.sourceforge.frcsimulator.gui.SimulatorDriverStation;
 import net.sourceforge.frcsimulator.internals.CRIO;
 import net.sourceforge.frcsimulator.internals.CRIOModule;
 import net.sourceforge.frcsimulator.internals.ModuleException;
@@ -103,6 +104,7 @@ public class Client {
                 @Override
                 public void run() {
                     SimulatorControlFrame simulatorControlFrame = new SimulatorControlFrame(testCase);
+		    SimulatorDriverStation simulatorDriverStation = new SimulatorDriverStation(testCase);
                     synchronized (lock) {
                         lock.notify();
                     }
