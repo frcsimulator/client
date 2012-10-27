@@ -4,21 +4,14 @@
  */
 package net.sourceforge.frcsimulator.gui;
 
-import net.sourceforge.frcsimulator.Client;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.io.*;
+import java.util.logging.*;
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
+import javax.swing.event.*;
+import javax.swing.tree.*;
+import net.sourceforge.frcsimulator.Client;
 import net.sourceforge.frcsimulator.gui.propertyeditor.*;
 import net.sourceforge.frcsimulator.internals.*;
 import net.sourceforge.frcsimulator.mistware.Simulator;
@@ -397,9 +390,7 @@ public class SimulatorControlFrame extends JFrame {
 		//// Initialize the simulator ////
 		try {
 			simulator = new Simulator(action);
-		} catch (ClassNotFoundException ex) {
-			logger.log(Level.SEVERE, null, ex);
-		} catch (ClassCastException ex) {
+		} catch (ClassNotFoundException | ClassCastException ex) {
 			logger.log(Level.SEVERE, null, ex);
 		}
 		simulator.getLogger().addHandler(new GuiHandler());

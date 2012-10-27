@@ -1,21 +1,12 @@
 package net.sourceforge.frcsimulator.gui;
 
 import edu.wpi.first.wpilibj.communication.FRCCommonControlData;
-import java.awt.FlowLayout;
-import java.awt.Graphics;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import edu.wpi.first.wpilibj.communication.FRCControl;
+import java.awt.*;
+import java.awt.event.*;
+import java.beans.*;
 import java.text.NumberFormat;
-import javax.swing.ButtonGroup;
-import javax.swing.JComponent;
-import javax.swing.JFormattedTextField;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JRadioButton;
-import javax.swing.JTextArea;
-import net.sourceforge.frcsimulator.mistware.Simulator;
+import javax.swing.*;
 
 /**
  * A Clone of the DriverStation used in the competition.
@@ -55,6 +46,7 @@ public class SimulatorDriverStation  extends JFrame{
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
+		    dataLCD.setText("");
 		    FRCCommonControlData.getInstance().getSimProperties().get("enabled").set(false);
 		    FRCCommonControlData.getInstance().getSimProperties().get("autonomous").set(true);
 		    FRCCommonControlData.getInstance().getSimProperties().get("enabled").set(true);
@@ -65,6 +57,7 @@ public class SimulatorDriverStation  extends JFrame{
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
+		    dataLCD.setText("");
 		    FRCCommonControlData.getInstance().getSimProperties().get("enabled").set(false);
 		    FRCCommonControlData.getInstance().getSimProperties().get("autonomous").set(false);
 		    FRCCommonControlData.getInstance().getSimProperties().get("enabled").set(true);
@@ -75,6 +68,7 @@ public class SimulatorDriverStation  extends JFrame{
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
+		    dataLCD.setText("");
 		    FRCCommonControlData.getInstance().getSimProperties().get("enabled").set(false);
 		}
 		
@@ -161,8 +155,8 @@ public class SimulatorDriverStation  extends JFrame{
 	    one.setEnabled(noNPE);
 	    two.setEnabled(noNPE);
 	    three.setEnabled(noNPE);
-
-	try {
+	    dataLCD.setText(FRCControl.dataLCDText);
+	    try {
 	    Thread.sleep(100);
 	} catch (InterruptedException ex) {}
 	repaint();
