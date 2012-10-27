@@ -37,18 +37,18 @@ public class Client {
         try {
             if(arguments.get("analog") !=null){
                 for(int i = 0; i < arguments.get("analog").length;i++){
-                    CRIO.getInstance().addModule(new CRIOModule(0x01), Integer.parseInt(arguments.get("analog")[i]));
+                    CRIO.getInstance().addModule(new CRIOModule(0x01), Integer.parseInt(arguments.get("analog")[i])-1);
                 }
             }
             if(arguments.get("digital") !=null){
                 for(int i = 0; i < arguments.get("digital").length;i++){
                     System.out.println("Adding digital module");
-                    CRIO.getInstance().addModule(new CRIOModule(0x02), Integer.parseInt(arguments.get("digital")[i]));
+                    CRIO.getInstance().addModule(new CRIOModule(0x02), Integer.parseInt(arguments.get("digital")[i])-1);
                 }
             }
             if(arguments.get("solenoid") !=null){
                 for(int i = 0; i < arguments.get("solenoid").length;i++){
-                    CRIO.getInstance().addModule(new CRIOModule(0x03), Integer.parseInt(arguments.get("solenoid")[i]));
+                    CRIO.getInstance().addModule(new CRIOModule(0x03), Integer.parseInt(arguments.get("solenoid")[i])-1);
                 }
             }
             CRIO.getInstance().addModule(new CRIOModule(0x01), 1);
