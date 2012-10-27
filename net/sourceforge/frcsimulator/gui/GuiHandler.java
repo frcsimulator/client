@@ -4,6 +4,8 @@
  */
 package net.sourceforge.frcsimulator.gui;
 
+import java.io.OutputStream;
+import java.io.PrintStream;
 import net.sourceforge.frcsimulator.Client;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -15,13 +17,17 @@ import javax.swing.JOptionPane;
  * @author wolf
  */
 class GuiHandler extends Handler {
+	PrintStream systemErr;
+	public GuiHandler(PrintStream iSystemErr) {
+		systemErr=iSystemErr;
+	}
 	@Override
 	public void publish(LogRecord lr) {
 		if (lr.getLevel().equals(Level.SEVERE) || lr.getLevel().equals(Level.WARNING)) {
 			boolean severe = lr.getLevel().equals(Level.SEVERE);
 			Object[] message = {severe?"Fatal error":"Warning",lr.getMessage(),null,null,null};
 			if (lr.getThrown() != null) {
-				lr.getThrown().printStackTrace();
+				lr.getThrown().printStackTrace(systemErr);
 				message[2] = lr.getThrown().getClass().toString();
 				message[3] = lr.getThrown().getMessage();
 			}

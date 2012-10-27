@@ -49,7 +49,7 @@ public class SimulatorControlFrame extends JFrame {
 	public SimulatorControlFrame(String testCase) {
 		super("Frc Simulator - " + testCase);
 		midletName = testCase;
-		logger.addHandler(new GuiHandler());
+		logger.addHandler(new GuiHandler(System.out));
 		//// Property Editors ////
 		PropertyEditor.register(Boolean.class, BooleanPropertyEditor.class);
 		PropertyEditor.register(Character.class, CharacterPropertyEditor.class);
@@ -208,7 +208,6 @@ public class SimulatorControlFrame extends JFrame {
 		add(propertyPane);
 		consoleStream = new PrintStream(new TextAreaStream(console));
 		startButton.addActionListener(new ActionListener() {
-
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 				initSimulator(midletName);
@@ -390,10 +389,12 @@ public class SimulatorControlFrame extends JFrame {
 		//// Initialize the simulator ////
 		try {
 			simulator = new Simulator(action);
-		} catch (ClassNotFoundException | ClassCastException ex) {
+		} catch (ClassNotFoundException ex) {
+			logger.log(Level.SEVERE, null, ex);
+		} catch (ClassCastException ex) {
 			logger.log(Level.SEVERE, null, ex);
 		}
-		simulator.getLogger().addHandler(new GuiHandler());
+		simulator.getLogger().addHandler(new GuiHandler(System.err));
 		try {
 			simulator.onStatusChange(SimulatorControlFrame.class.getMethod("simStateChange", Simulator.Status.class, Simulator.Status.class));
 		} catch (Exception e) {

@@ -42,7 +42,6 @@ public class Client {
             }
             if(arguments.get("digital") !=null){
                 for(int i = 0; i < arguments.get("digital").length;i++){
-                    System.out.println("Adding digital module");
                     CRIO.getInstance().addModule(new CRIOModule(0x02), Integer.parseInt(arguments.get("digital")[i])-1);
                 }
             }
