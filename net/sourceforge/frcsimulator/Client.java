@@ -50,7 +50,7 @@ public class Client {
                     CRIO.getInstance().addModule(new CRIOModule(0x03), Integer.parseInt(arguments.get("solenoid")[i])-1);
                 }
             }
-            CRIO.getInstance().addModule(new CRIOModule(0x01), 1);
+            CRIO.getInstance().addModule(new CRIOModule(0x01), 0);
         } catch (ModuleException ex) {
             ex.printStackTrace();
         }
