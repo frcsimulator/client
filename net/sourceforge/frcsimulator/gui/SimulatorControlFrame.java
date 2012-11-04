@@ -7,6 +7,7 @@ package net.sourceforge.frcsimulator.gui;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.lang.reflect.Array;
 import java.util.logging.*;
 import javax.swing.*;
 import javax.swing.event.*;
@@ -236,152 +237,45 @@ public class SimulatorControlFrame extends JFrame {
 		componentTree.setModel(new DefaultTreeModel(root));
 	}
 
-	// TODO RecurseNodes is *extremely* repetitive--is there any way to simplify this?
-	// I don't think so safely, unfortunately.
 	private void recurseNodes(DefaultMutableTreeNode branch, FrcBotSimComponent component) {
-		for (String key : component.getSimProperties().keySet()) {
-			DefaultMutableTreeNode branchBranch = new DefaultMutableTreeNode(key);
-			branch.add(branchBranch);
-			try {
-				if (component.getSimProperties().get(key).get().getClass().getName().equals(boolean[].class.getName())) {
-					for (int i = 0; i < ((boolean[]) component.getSimProperties().get(key).get()).length; i++) {
-						branchBranch.add(new DefaultMutableTreeNode(i));
-					}
-				} else if (component.getSimProperties().get(key).get().getClass().getName().equals(byte[].class.getName())) {
-					for (int i = 0; i < ((byte[]) component.getSimProperties().get(key).get()).length; i++) {
-						branchBranch.add(new DefaultMutableTreeNode(i));
-					}
-				} else if (component.getSimProperties().get(key).get().getClass().getName().equals(char[].class.getName())) {
-					for (int i = 0; i < ((char[]) component.getSimProperties().get(key).get()).length; i++) {
-						branchBranch.add(new DefaultMutableTreeNode(i));
-					}
-				} else if (component.getSimProperties().get(key).get().getClass().getName().equals(short[].class.getName())) {
-					for (int i = 0; i < ((short[]) component.getSimProperties().get(key).get()).length; i++) {
-						branchBranch.add(new DefaultMutableTreeNode(i));
-					}
-				} else if (component.getSimProperties().get(key).get().getClass().getName().equals(int[].class.getName())) {
-					for (int i = 0; i < ((int[]) component.getSimProperties().get(key).get()).length; i++) {
-						branchBranch.add(new DefaultMutableTreeNode(i));
-					}
-				} else if (component.getSimProperties().get(key).get().getClass().getName().equals(long[].class.getName())) {
-					for (int i = 0; i < ((long[]) component.getSimProperties().get(key).get()).length; i++) {
-						branchBranch.add(new DefaultMutableTreeNode(i));
-					}
-				} else if (component.getSimProperties().get(key).get().getClass().getName().equals(float[].class.getName())) {
-					for (int i = 0; i < ((float[]) component.getSimProperties().get(key).get()).length; i++) {
-						branchBranch.add(new DefaultMutableTreeNode(i));
-					}
-				} else if (component.getSimProperties().get(key).get().getClass().getName().equals(double[].class.getName())) {
-					for (int i = 0; i < ((double[]) component.getSimProperties().get(key).get()).length; i++) {
-						branchBranch.add(new DefaultMutableTreeNode(i));
-					}
-				} else if (component.getSimProperties().get(key).get().getClass().isArray()) {
-					recurseNodes(branchBranch, (Object[]) component.getSimProperties().get(key).get());
-				} else if (component.getSimProperties().get(key).get().getClass().getName().equals(FrcBotSimProperties.class.getName())) {
-					recurseNodes(branchBranch, (FrcBotSimProperties) component.getSimProperties().get(key).get());
-				} else if (FrcBotSimComponent.class.isAssignableFrom(component.getSimProperties().get(key).get().getClass())) {
-					recurseNodes(branchBranch, (FrcBotSimComponent) component.getSimProperties().get(key).get());
-				}
-			} catch (NullPointerException npe) {
-			}
-		}
+		recurseNodes(branch,component.getSimProperties());
 	}
-
 	private void recurseNodes(DefaultMutableTreeNode branch, FrcBotSimProperties properties) {
 		for (String key : properties.keySet()) {
-			DefaultMutableTreeNode branchBranch = new DefaultMutableTreeNode(key);
-			branch.add(branchBranch);
-			try {
-				if (properties.get(key).get().getClass().getName().equals(boolean[].class.getName())) {
-					for (int i = 0; i < ((boolean[]) properties.get(key).get()).length; i++) {
-						branchBranch.add(new DefaultMutableTreeNode(i));
-					}
-				} else if (properties.get(key).get().getClass().getName().equals(byte[].class.getName())) {
-					for (int i = 0; i < ((byte[]) properties.get(key).get()).length; i++) {
-						branchBranch.add(new DefaultMutableTreeNode(i));
-					}
-				} else if (properties.get(key).get().getClass().getName().equals(char[].class.getName())) {
-					for (int i = 0; i < ((char[]) properties.get(key).get()).length; i++) {
-						branchBranch.add(new DefaultMutableTreeNode(i));
-					}
-				} else if (properties.get(key).get().getClass().getName().equals(short[].class.getName())) {
-					for (int i = 0; i < ((short[]) properties.get(key).get()).length; i++) {
-						branchBranch.add(new DefaultMutableTreeNode(i));
-					}
-				} else if (properties.get(key).get().getClass().getName().equals(int[].class.getName())) {
-					for (int i = 0; i < ((int[]) properties.get(key).get()).length; i++) {
-						branchBranch.add(new DefaultMutableTreeNode(i));
-					}
-				} else if (properties.get(key).get().getClass().getName().equals(long[].class.getName())) {
-					for (int i = 0; i < ((long[]) properties.get(key).get()).length; i++) {
-						branchBranch.add(new DefaultMutableTreeNode(i));
-					}
-				} else if (properties.get(key).get().getClass().getName().equals(float[].class.getName())) {
-					for (int i = 0; i < ((float[]) properties.get(key).get()).length; i++) {
-						branchBranch.add(new DefaultMutableTreeNode(i));
-					}
-				} else if (properties.get(key).get().getClass().getName().equals(double[].class.getName())) {
-					for (int i = 0; i < ((double[]) properties.get(key).get()).length; i++) {
-						branchBranch.add(new DefaultMutableTreeNode(i));
-					}
-				} else if (properties.get(key).get().getClass().isArray()) {
-					recurseNodes(branchBranch, (Object[]) properties.get(key).get());
-				} else if (properties.get(key).get().getClass().getName().equals(FrcBotSimProperties.class.getName())) {
-					recurseNodes(branchBranch, (FrcBotSimProperties) properties.get(key).get());
-				} else if (FrcBotSimComponent.class.isAssignableFrom(properties.get(key).get().getClass())) {
-					recurseNodes(branchBranch, (FrcBotSimComponent) properties.get(key).get());
-				}
-			} catch (NullPointerException npe) {
-			}
+			recurseNode(branch,properties.get(key).get(),key);
+		}
+	}
+	private void recurseNodes(DefaultMutableTreeNode branch, Object[] array) {
+		for (int i = 0; i < array.length; i++) {
+			recurseNode(branch,array[i],i);
 		}
 	}
 
-	private void recurseNodes(DefaultMutableTreeNode branch, Object[] array) {
-		for (int i = 0; i < array.length; i++) {
-			DefaultMutableTreeNode branchBranch = new DefaultMutableTreeNode(array[i]);
-			branch.add(branchBranch);
-			try {
-				if (array[i].getClass().getName().equals(boolean[].class.getName())) {
-					for (int j = 0; j < ((boolean[]) array[i]).length; j++) {
-						branchBranch.add(new DefaultMutableTreeNode(j));
+	private void recurseNode(DefaultMutableTreeNode branch, Object object, Object key) {
+		DefaultMutableTreeNode branchBranch = new DefaultMutableTreeNode(key);
+		branch.add(branchBranch);
+		Class[] classes={boolean[].class,byte[].class,char[].class,short[].class,int[].class,long[].class,
+			float[].class, double[].class};
+		try {
+			boolean worked=false;
+			for (int c=0; c<classes.length; c++) {
+				if (object.getClass().equals(classes[c])) {
+					for (int i = 0; i < Array.getLength(classes[c].cast(object)); i++) {
+						branchBranch.add(new DefaultMutableTreeNode(i));
 					}
-				} else if (array[i].getClass().getName().equals(byte[].class.getName())) {
-					for (int j = 0; j < ((byte[]) array[i]).length; j++) {
-						branchBranch.add(new DefaultMutableTreeNode(j));
-					}
-				} else if (array[i].getClass().getName().equals(char[].class.getName())) {
-					for (int j = 0; j < ((char[]) array[i]).length; j++) {
-						branchBranch.add(new DefaultMutableTreeNode(j));
-					}
-				} else if (array[i].getClass().getName().equals(short[].class.getName())) {
-					for (int j = 0; j < ((short[]) array[i]).length; j++) {
-						branchBranch.add(new DefaultMutableTreeNode(j));
-					}
-				} else if (array[i].getClass().getName().equals(int[].class.getName())) {
-					for (int j = 0; j < ((int[]) array[i]).length; j++) {
-						branchBranch.add(new DefaultMutableTreeNode(j));
-					}
-				} else if (array[i].getClass().getName().equals(long[].class.getName())) {
-					for (int j = 0; j < ((long[]) array[i]).length; j++) {
-						branchBranch.add(new DefaultMutableTreeNode(j));
-					}
-				} else if (array[i].getClass().getName().equals(float[].class.getName())) {
-					for (int j = 0; j < ((float[]) array[i]).length; j++) {
-						branchBranch.add(new DefaultMutableTreeNode(j));
-					}
-				} else if (array[i].getClass().getName().equals(double[].class.getName())) {
-					for (int j = 0; j < ((double[]) array[i]).length; j++) {
-						branchBranch.add(new DefaultMutableTreeNode(j));
-					}
-				} else if (array[i].getClass().isArray()) {
-					recurseNodes(branchBranch, (Object[]) array[i]);
-				} else if (array[i].getClass().getName().equals(FrcBotSimProperties.class.getName())) {
-					recurseNodes(branchBranch, (FrcBotSimProperties) array[i]);
-				} else if (FrcBotSimComponent.class.isAssignableFrom(array[i].getClass())) {
-					recurseNodes(branchBranch, (FrcBotSimComponent) array[i]);
+					worked=true;
 				}
-			} catch (NullPointerException npe) {
 			}
+			if (worked) {
+				// Do nothing, but it makes the logic easier
+			} else if (object.getClass().isArray()) {
+				recurseNodes(branchBranch, (Object[]) object);
+			} else if (object.getClass().getName().equals(FrcBotSimProperties.class.getName())) {
+				recurseNodes(branchBranch, (FrcBotSimProperties) object);
+			} else if (FrcBotSimComponent.class.isAssignableFrom(object.getClass())) {
+				recurseNodes(branchBranch, (FrcBotSimComponent)object);
+			}
+		} catch (NullPointerException npe) {
 		}
 	}
 
