@@ -254,13 +254,13 @@ public class SimulatorControlFrame extends JFrame {
 	private void recurseNode(DefaultMutableTreeNode branch, Object object, Object key) {
 		DefaultMutableTreeNode branchBranch = new DefaultMutableTreeNode(key);
 		branch.add(branchBranch);
-		Class[] classes={boolean[].class,byte[].class,char[].class,short[].class,int[].class,long[].class,
+		final Class[] classes={boolean[].class,byte[].class,char[].class,short[].class,int[].class,long[].class,
 			float[].class, double[].class};
 		try {
 			boolean worked=false;
-			for (int c=0; c<classes.length; c++) {
-				if (object.getClass().equals(classes[c])) {
-					for (int i = 0; i < Array.getLength(classes[c].cast(object)); i++) {
+			for (Class c:classes) {
+				if (object.getClass().equals(c)) {
+					for (int i = 0; i < Array.getLength(c.cast(object)); i++) {
 						branchBranch.add(new DefaultMutableTreeNode(i));
 					}
 					worked=true;
