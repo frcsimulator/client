@@ -153,28 +153,27 @@ public class SimulatorControlFrame extends JFrame {
 			public void valueChanged(TreeSelectionEvent tse) {
 				if (tse.isAddedPath()) {
 					try {
-						Object[] path = componentTree.getSelectionPath().getPath();
-						int i = 0;
-						Object edit = null;
-						for (Object pathNode : path) {
+						Object[] path = tse.getPath() // Get the path that was selected (TreePath TreeSelectionEvent.getPath())
+								.getPath(); // And turn it into an array of objects (Object[] TreePath.getPath())
+						Object edit = null; // The actual object that's going to be edited
+						for (Object pathNode : path) { // Get the edit object out of the path
 							Object node;
+							// Extract the object from the TreeNode if necessary
 							if (DefaultMutableTreeNode.class.isAssignableFrom(pathNode.getClass())) {
-								DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode)pathNode;
-								node = treeNode.getUserObject();
+								node = ((DefaultMutableTreeNode)pathNode).getUserObject();
 							} else {
 								node = pathNode;
 							}
-							i++;
-							if (node == null || edit == null || "Simulator".equals(edit) || FrcBotSimProperty.class.isAssignableFrom(node.getClass())) {
-								edit = node;
-							} else if (FrcBotSimComponent.class.isAssignableFrom(edit.getClass()) && String.class.isAssignableFrom(node.getClass())) {
+							if (node == null || edit == null || "Simulator".equals(edit) || node instanceof FrcBotSimProperty) {
+								edit = node; // Skip this node in the path
+							} else if (edit instanceof FrcBotSimComponent && node instanceof String) {
 								edit = ((FrcBotSimComponent)edit).getSimProperties().get((String)node);
-							} else if (FrcBotSimProperty.class.isAssignableFrom(edit.getClass()) && (FrcBotSimProperties.class.isAssignableFrom(((FrcBotSimProperty)edit).get().getClass())) && String.class.isAssignableFrom(node.getClass())) {
+							} else if (edit instanceof FrcBotSimProperty && ((FrcBotSimProperty)edit).get() instanceof FrcBotSimProperties && node instanceof String) {
 								edit = ((FrcBotSimProperties)((FrcBotSimProperty)edit).get()).get((String)node);
-							} else if (Integer.class.isAssignableFrom(node.getClass())) {
+							} else if (node instanceof Integer) {
 								edit = new ArrayWrappingProperty<Object>(FrcBotSimProperty.class.cast(edit),Integer.decode(node.toString()));
 							} else {
-								edit = node;
+								edit = node; // Skip this node in the path
 							}
 						}
 						if (edit != null && FrcBotSimProperty.class.isAssignableFrom(edit.getClass())) {
@@ -227,11 +226,6 @@ public class SimulatorControlFrame extends JFrame {
 		for (FrcBotSimComponent component : SimulatedBot.getSimComponents()) {
 			DefaultMutableTreeNode branch = new DefaultMutableTreeNode(component);
 			recurseNodes(branch, component.getSimProperties());
-			/*
-			 * for (String key:component.getSimProperties().keySet()) {
-			 * DefaultMutableTreeNode leaf = new DefaultMutableTreeNode(key);
-			 * branch.add(leaf); }
-			 */
 			root.add(branch);
 		}
 		componentTree.setModel(new DefaultTreeModel(root));
@@ -276,6 +270,7 @@ public class SimulatorControlFrame extends JFrame {
 				recurseNodes(branchBranch, (FrcBotSimComponent)object);
 			}
 		} catch (NullPointerException npe) {
+			// TODO should we do something here?
 		}
 	}
 
@@ -312,13 +307,10 @@ public class SimulatorControlFrame extends JFrame {
 	}
 
 	public class TextAreaStream extends OutputStream {
-
 		protected JTextArea area;
-
 		public TextAreaStream(JTextArea textArea) {
 			area = textArea;
 		}
-
 		@Override
 		public void write(int i) throws IOException {
 			area.append(new String(Character.toChars(i)));
@@ -327,14 +319,11 @@ public class SimulatorControlFrame extends JFrame {
 	}
 
 	private class ExampleSelectAction extends AbstractAction {
-
 		protected String midlet;
-
 		public ExampleSelectAction(String title, String midletClass) {
 			super(title);
 			midlet = midletClass;
 		}
-
 		@Override
 		public void actionPerformed(ActionEvent ae) {
 			if (simulator == null) {
