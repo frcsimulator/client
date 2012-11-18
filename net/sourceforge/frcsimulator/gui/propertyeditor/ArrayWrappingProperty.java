@@ -25,7 +25,27 @@ public class ArrayWrappingProperty<T> extends FrcBotSimProperty<T>{
 		//System.out.println("Set "+to+" was "+get().equals(to) + " equal? "+(!get().equals(to)));
 		System.out.println(equals(to));
 		if (!equals(to)) {
-			Array.set(m_property.get(),m_index,to);
+			if (get() instanceof Byte){
+				Array.set(m_property.get(),m_index,((Number)to).byteValue());
+			} else if(get() instanceof Short){
+				Array.set(m_property.get(),m_index,((Number)to).shortValue());
+			} else if(get() instanceof Integer){
+				Array.set(m_property.get(),m_index,((Number)to).intValue());
+			} else if(get() instanceof Float){
+				Array.set(m_property.get(),m_index,((Number)to).floatValue());
+			} else if(get() instanceof Long){
+				Array.set(m_property.get(),m_index,((Number)to).longValue());
+			} else if(get() instanceof Double){
+				Array.set(m_property.get(),m_index,((Number)to).doubleValue());
+			} else if(get() instanceof Boolean){
+				Array.set(m_property.get(),m_index,Boolean.parseBoolean(to.toString()));
+			} else if(get() instanceof Character){
+				Array.set(m_property.get(),m_index,to.toString().charAt(0));
+			} else if(get() instanceof String){
+				Array.set(m_property.get(),m_index,to.toString());
+			} else{
+				Array.set(m_property.get(),m_index,to);
+			}
 			triggerChange();
 		}
 	}

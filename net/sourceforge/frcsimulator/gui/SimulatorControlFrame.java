@@ -171,7 +171,7 @@ public class SimulatorControlFrame extends JFrame {
 							} else if (edit instanceof FrcBotSimProperty && ((FrcBotSimProperty)edit).get() instanceof FrcBotSimProperties && node instanceof String) {
 								edit = ((FrcBotSimProperties)((FrcBotSimProperty)edit).get()).get((String)node);
 							} else if (node instanceof Integer) {
-								edit = new ArrayWrappingProperty<Object>(FrcBotSimProperty.class.cast(edit),Integer.decode(node.toString()));
+								edit = new ArrayWrappingProperty((FrcBotSimProperty)edit,(Integer)node);
 							} else {
 								edit = node; // Skip this node in the path
 							}
