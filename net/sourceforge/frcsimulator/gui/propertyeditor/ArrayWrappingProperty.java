@@ -23,7 +23,7 @@ public class ArrayWrappingProperty<T> extends FrcBotSimProperty<T>{
 		// TODO figure out why get() != to when they're identical
 		//System.out.println(to.getClass() + ":"+get().getClass());
 		//System.out.println("Set "+to+" was "+get().equals(to) + " equal? "+(!get().equals(to)));
-		System.out.println(equals(to));
+		//System.out.println(equals(to));
 		if (!equals(to)) {
 			if (get() instanceof Byte){
 				Array.set(m_property.get(),m_index,((Number)to).byteValue());
